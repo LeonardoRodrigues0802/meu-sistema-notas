@@ -173,7 +173,8 @@ async function login(event) {
 
     const result = await response.json();
 
-    if (!response.ok) {
+    // Validação correta baseada no campo 'ok' retornado pela API
+    if (!result.ok) {
       if (result.precisa_whatsapp) {
         whatsappInputGroup.style.display = 'flex';
         whatsappNumInput.required = true;

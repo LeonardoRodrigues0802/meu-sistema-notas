@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastrar Aluno</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-dark text-light d-flex align-items-center justify-content-center vh-100">
+    <div class="card bg-secondary p-4 shadow" style="width: 400px;">
+        <h3 class="mb-3">➕ Cadastrar Aluno</h3>
+        {% if sucesso %}
+            <div class="alert alert-success py-1">Aluno cadastrado com sucesso!</div>
+        {% endif %}
+        <form method="POST">
+            <div class="mb-2"><label class="form-label">Nome</label><input type="text" name="nome" class="form-control" required></div>
+            <div class="mb-2"><label class="form-label">Nota 1</label><input type="number" step="0.1" name="nota1" class="form-control" required></div>
+            <div class="mb-2"><label class="form-label">Nota 2</label><input type="number" step="0.1" name="nota2" class="form-control" required></div>
+            <div class="mb-3"><label class="form-label">Nota 3</label><input type="number" step="0.1" name="nota3" class="form-control" required></div>
+            <button type="submit" class="btn btn-success w-100 mb-2">Salvar Aluno</button>
+            <a href="/painel" class="btn btn-light w-100">Voltar</a>
+        </form>
+    </div>
+</body>
+</html>

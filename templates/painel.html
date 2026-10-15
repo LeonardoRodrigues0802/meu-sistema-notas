@@ -1,42 +1,29 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <title>Painel - Sistema de Notas</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
+<head><meta charset="UTF-8"><title>Painel</title><link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"></head>
 <body class="bg-dark text-light">
     <div class="container mt-5">
         <h2>🎓 Painel Acadêmico</h2>
         <p class="text-info">Logado como: <strong>{{ usuario }}</strong> ({{ tipo }})</p>
         
         <div class="row my-4">
-            <div class="col-md-4">
-                <div class="card bg-secondary p-3">
-                    <h5>Total de Alunos</h5>
-                    <h3>{{ relatorio.total }}</h3>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card bg-secondary p-3">
-                    <h5>Média da Turma</h5>
-                    <h3>{{ "%.1f"|format(relatorio.media_turma) }}</h3>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card bg-secondary p-3">
-                    <h5>Aprovados</h5>
-                    <h3>{{ relatorio.aprovados }}</h3>
-                </div>
-            </div>
+            <div class="col-md-4"><div class="card bg-secondary p-3"><h5>Total de Alunos</h5><h3>{{ relatorio.total }}</h3></div></div>
+            <div class="col-md-4"><div class="card bg-secondary p-3"><h5>Média da Turma</h5><h3>{{ "%.1f"|format(relatorio.media_turma) }}</h3></div></div>
+            <div class="col-md-4"><div class="card bg-secondary p-3"><h5>Aprovados</h5><h3>{{ relatorio.aprovados }}</h3></div></div>
         </div>
 
-        <div class="mt-4">
-            <a href="/alunos" class="btn btn-primary">📋 Ver Alunos</a>
+        <div class="d-grid gap-2 d-md-block mt-4">
+            <a href="/alunos" class="btn btn-primary">📋 Lista</a>
+            <a href="/buscar" class="btn btn-info">🔎 Buscar</a>
+            <a href="/top3" class="btn btn-warning">🏆 Top 3</a>
             {% if tipo == 'admin' %}
-                <a href="/cadastrar" class="btn btn-success">➕ Cadastrar Aluno</a>
+                <a href="/cadastrar" class="btn btn-success">➕ Cadastrar</a>
+                <a href="/atualizar" class="btn btn-secondary">✏️ Atualizar</a>
+                <a href="/remover" class="btn btn-danger">🗑️ Remover</a>
+                <a href="/usuarios" class="btn btn-dark border">👥 Usuários</a>
+                <a href="/logs" class="btn btn-light">📝 Logs</a>
             {% endif %}
-            <a href="/logout" class="btn btn-danger float-end">🚪 Sair</a>
+            <a href="/logout" class="btn btn-outline-danger float-end">🚪 Sair</a>
         </div>
     </div>
 </body>

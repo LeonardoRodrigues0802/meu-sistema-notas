@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head><meta charset="UTF-8"><title>Buscar Alunos</title><link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"></head>
+<body class="bg-dark text-light">
+    <div class="container mt-5">
+        <h2>🔎 Buscar Alunos</h2>
+        <form method="POST" class="row g-3 my-3">
+            <div class="col-md-6"><input type="text" name="termo" class="form-control" placeholder="Digite o nome ou situação (Aprovado...)" value="{{ termo }}" required></div>
+            <div class="col-md-3">
+                <select name="tipo_busca" class="form-select">
+                    <option value="nome">Por Nome</option>
+                    <option value="situacao">Por Situação</option>
+                </select>
+            </div>
+            <div class="col-md-3"><button type="submit" class="btn btn-primary w-100">Pesquisar</button></div>
+        </form>
+        {% if resultados %}
+        <table class="table table-dark table-striped">
+            <thead><tr><th>ID</th><th>Nome</th><th>N1</th><th>N2</th><th>N3</th><th>Média</th><th>Situação</th></tr></thead>
+            <tbody>
+                {% for a in resultados %}
+                <tr><td>{{ a.id }}</td><td>{{ a.nome }}</td><td>{{ a.nota1 }}</td><td>{{ a.nota2 }}</td><td>{{ a.nota3 }}</td><td>{{ "%.1f"|format(a.media) }}</td><td>{{ a.situacao }}</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+        <a href="/painel" class="btn btn-secondary mt-3">Voltar ao Painel</a>
+    </div>
+</body>
+</html>

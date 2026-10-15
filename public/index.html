@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sistema de Notas</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div id="app">
+      <section id="login-screen" class="screen active">
+        <div class="login-card">
+          <div class="brand">
+            <span class="brand-mark">🎓</span>
+            <h1>Sistema de Notas</h1>
+          </div>
+
+          <form id="login-form">
+            <label>
+              Usuário
+              <input type="text" id="usuario" placeholder="Digite seu usuário" required />
+            </label>
+
+            <label>
+              Senha
+              <input type="password" id="senha" placeholder="Digite sua senha" required />
+            </label>
+
+            <button type="submit">Entrar</button>
+          </form>
+
+          <p id="login-message" class="message"></p>
+        </div>
+      </section>
+
+      <section id="dashboard-screen" class="screen">
+        <aside class="sidebar">
+          <div class="brand small">
+            <span class="brand-mark">🎓</span>
+            <h2>Acadêmico</h2>
+          </div>
+
+          <nav class="nav">
+            <button class="nav-btn active" data-target="overview">Visão geral</button>
+            <button class="nav-btn" data-target="students">Alunos</button>
+            <button class="nav-btn" data-target="users">Usuários</button>
+            <button class="nav-btn" data-target="logs">Logs</button>
+          </nav>
+
+          <button id="logout-btn" class="logout-btn">Sair</button>
+        </aside>
+
+        <main class="content">
+          <header class="topbar">
+            <div>
+              <p class="eyebrow">Painel administrativo</p>
+              <h3 id="welcome-user">Bem-vindo</h3>
+            </div>
+            <div class="status-pill" id="user-role">Tipo</div>
+          </header>
+
+          <section id="overview" class="panel active">
+            <div class="stats-grid">
+              <article class="stat-card accent-blue">
+                <span>Total de alunos</span>
+                <strong id="total-alunos">0</strong>
+              </article>
+              <article class="stat-card accent-green">
+                <span>Aprovados</span>
+                <strong id="aprovados">0</strong>
+              </article>
+              <article class="stat-card accent-yellow">
+                <span>Recuperação</span>
+                <strong id="recuperacao">0</strong>
+              </article>
+              <article class="stat-card accent-red">
+                <span>Reprovados</span>
+                <strong id="reprovados">0</strong>
+              </article>
+            </div>
+
+            <div class="summary-grid">
+              <div class="card">
+                <h4>Média da turma</h4>
+                <p class="metric" id="media-turma">0.0</p>
+              </div>
+              <div class="card">
+                <h4>Melhor aluno</h4>
+                <p id="melhor-aluno">Nenhum</p>
+              </div>
+              <div class="card">
+                <h4>Pior desempenho</h4>
+                <p id="pior-aluno">Nenhum</p>
+              </div>
+            </div>
+          </section>
+
+          <section id="students" class="panel">
+            <div class="section-header">
+              <h3>Alunos cadastrados</h3>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>N1</th>
+                    <th>N2</th>
+                    <th>N3</th>
+                    <th>Média</th>
+                    <th>Situação</th>
+                  </tr>
+                </thead>
+                <tbody id="alunos-table"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section id="users" class="panel">
+            <div class="section-header">
+              <h3>Usuários do sistema</h3>
+            </div>
+
+            <form id="user-form" class="inline-form">
+              <input type="text" id="new-user" placeholder="Usuário" required />
+              <input type="password" id="new-password" placeholder="Senha" required />
+              <select id="new-role">
+                <option value="admin">Admin</option>
+                <option value="funcionario" selected>Funcionário</option>
+              </select>
+              <button type="submit">Cadastrar</button>
+            </form>
+
+            <p id="user-message" class="message"></p>
+
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Usuário</th>
+                    <th>Tipo</th>
+                  </tr>
+                </thead>
+                <tbody id="usuarios-table"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section id="logs" class="panel">
+            <div class="section-header">
+              <h3>Logs de acesso</h3>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Usuário</th>
+                    <th>Tipo</th>
+                    <th>Status</th>
+                    <th>Data/Hora</th>
+                  </tr>
+                </thead>
+                <tbody id="logs-table"></tbody>
+              </table>
+            </div>
+          </section>
+        </main>
+      </section>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>

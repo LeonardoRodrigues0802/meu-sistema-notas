@@ -173,23 +173,24 @@ async function login(event) {
 
     const result = await response.json();
 
-    // Validação correta baseada no campo 'ok' retornado pela API
-    if (!result.ok) {
-      if (result.precisa_whatsapp) {
-        whatsappInputGroup.style.display = 'flex';
-        whatsappNumInput.required = true;
-        setMessage(loginMessage, result.message, 'success');
-        return;
-      }
-      if (result.precisa_codigo) {
-        whatsappInputGroup.style.display = 'none';
-        whatsappNumInput.required = false;
-        codigoInputGroup.style.display = 'flex';
-        codigoWhatsappInput.required = true;
-        setMessage(loginMessage, result.message, 'success');
-        return;
-      }
-      throw new Error(result.message || 'Erro no login');
+    if (result.precisa_whatsapp) {
+      whatsappInputGroup.style.display = 'flex';
+      whatsappNumInput.required = true;
+      setMessage(loginMessage, result.message, 'success');
+      return;
+    }
+
+    if (result.precisa_codigo) {
+      whatsappInputGroup.style.display = 'none';
+      whatsappNumInput.required = false;
+      codigoInputGroup.style.display = 'flex';
+      codigoWhatsappInput.required = true;
+      setMessage(loginMessage, result.message, 'success');
+      return;
+    }
+
+    if (!result.ok || !result.usuario) {
+      throw new Error(result.message || 'Credenciais inválidas');
     }
 
     state.usuario = result.usuario;

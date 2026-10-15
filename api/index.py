@@ -1,12 +1,9 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-from pathlib import Path
-import os
+import random
 
 app = Flask(__name__)
 CORS(app)
-
-BASE_DIR = Path(__file__).resolve().parent.parent
 
 DADOS_ALUNOS = {
     "proximo_id": 2,
@@ -30,42 +27,10 @@ LOGS_ACESSO = [
     }
 ]
 
+CODIGOS_WHATSAPP = {}
+
 def calcular_media(n1, n2, n3):
     return (float(n1) + float(n2) + float(n3)) / 3
-
-def validar_chave_usb(tipo_perfil):
-    """Valida a chave do pendrive (simulada ou física) dependendo do perfil."""
-    nome_arquivo_chave = "sistema_chave.key"
-    token_admin = "ADMIN_SECRET_KEY_987654"
-
-    if tipo_perfil == "funcionario":
-        return True
-
-    caminhos_verificacao = []
-    caminhos_verificacao.append(BASE_DIR / nome_arquivo_chave)
-
-    if os.name == "nt":
-        for letra in range(ord("D"), ord("Z") + 1):
-            caminho_drive = Path(f"{chr(letra)}:/")
-            if caminho_drive.exists():
-                caminhos_verificacao.append(caminho_drive / nome_arquivo_chave)
-    else:
-        for base in ["/media", "/mnt", "/Volumes"]:
-            base_path = Path(base)
-            if base_path.exists():
-                for pasta in base_path.iterdir():
-                    caminhos_verificacao.append(pasta / nome_arquivo_chave)
-
-    for caminho in caminhos_verificacao:
-        try:
-            if caminho.exists():
-                conteudo = caminho.read_text(encoding="utf-8").strip()
-                if conteudo == token_admin:
-                    return True
-        except Exception:
-            pass
-
-    return False
 
 @app.route('/api/alunos', methods=['GET'])
 def get_alunos():
@@ -126,17 +91,38 @@ def login():
     dados = request.get_json() or {}
     usuario = (dados.get("usuario") or "").strip()
     senha = (dados.get("senha") or "").strip()
+    whatsapp_informado = (dados.get("whatsapp") or "").strip()
+    codigo_informado = (dados.get("codigo") or "").strip()
 
     conta = next((u for u in USUARIOS if u.get("usuario") == usuario and u.get("senha") == senha), None)
 
-    if conta:
-        tipo = conta.get("tipo", "funcionario")
-        if not validar_chave_usb(tipo):
-            return jsonify({"ok": False, "message": "Chave USB do Administrador ausente ou inválida!"}), 403
+    if not conta:
+        return jsonify({"ok": False, "message": "Credenciais inválidas"}), 401
+
+    tipo = conta.get("tipo", "funcionario")
+
+    if tipo == "admin":
+        if not whatsapp_informado:
+            return jsonify({"ok": False, "precisa_whatsapp": True, "message": "Informe o número de WhatsApp para receber o código."}), 200
+
+        if not codigo_informado:
+            codigo_gerado = str(random.randint(100000, 999999))
+            CODIGOS_WHATSAPP[usuario] = codigo_gerado
             
-        return jsonify({"ok": True, "usuario": conta})
+            print(f"[WHATSAPP SIMULADO para {whatsapp_informado}]: Seu código de acesso é {codigo_gerado}")
+            
+            return jsonify({
+                "ok": False, 
+                "precisa_codigo": True, 
+                "message": f"Código enviado para {whatsapp_informado}! (Código de teste: {codigo_gerado})"
+            }), 200
         
-    return jsonify({"ok": False, "message": "Credenciais inválidas"}), 401
+        if CODIGOS_WHATSAPP.get(usuario) != codigo_informado:
+            return jsonify({"ok": False, "message": "Código do WhatsApp incorreto ou expirado!"}), 403
+        
+        CODIGOS_WHATSAPP.pop(usuario, None)
+
+    return jsonify({"ok": True, "usuario": conta})
 
 @app.route('/api/usuarios/add', methods=['POST'])
 def add_usuario():

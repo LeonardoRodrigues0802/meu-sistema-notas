@@ -26,7 +26,17 @@
               <input type="password" id="senha" placeholder="Digite sua senha" required />
             </label>
 
-            <button type="submit">Entrar</button>
+            <label id="whatsapp-input-group" style="display: none;">
+              Número do WhatsApp
+              <input type="text" id="whatsapp-num" placeholder="Ex: 5511999999999" />
+            </label>
+
+            <label id="codigo-input-group" style="display: none;">
+              Código de Verificação
+              <input type="text" id="codigo-whatsapp" placeholder="Digite o código de 6 dígitos" />
+            </label>
+
+            <button type="submit" id="login-btn">Entrar</button>
           </form>
 
           <p id="login-message" class="message"></p>

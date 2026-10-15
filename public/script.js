@@ -7,6 +7,11 @@ const userRole = document.getElementById('user-role');
 const userForm = document.getElementById('user-form');
 const userMessage = document.getElementById('user-message');
 
+const whatsappInputGroup = document.getElementById('whatsapp-input-group');
+const whatsappNumInput = document.getElementById('whatsapp-num');
+const codigoInputGroup = document.getElementById('codigo-input-group');
+const codigoWhatsappInput = document.getElementById('codigo-whatsapp');
+
 const state = {
   usuario: null,
   alunos: [],
@@ -156,18 +161,45 @@ async function login(event) {
   event.preventDefault();
   const usuario = document.getElementById('usuario').value.trim();
   const senha = document.getElementById('senha').value.trim();
+  const whatsapp = whatsappNumInput.value.trim();
+  const codigo = codigoWhatsappInput.value.trim();
 
   try {
-    const result = await fetchJson('/api/login', {
+    const response = await fetch(`${API_BASE}/api/login`, {
       method: 'POST',
-      body: JSON.stringify({ usuario, senha }),
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ usuario, senha, whatsapp, codigo }),
     });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      if (result.precisa_whatsapp) {
+        whatsappInputGroup.style.display = 'flex';
+        whatsappNumInput.required = true;
+        setMessage(loginMessage, result.message, 'success');
+        return;
+      }
+      if (result.precisa_codigo) {
+        whatsappInputGroup.style.display = 'none';
+        whatsappNumInput.required = false;
+        codigoInputGroup.style.display = 'flex';
+        codigoWhatsappInput.required = true;
+        setMessage(loginMessage, result.message, 'success');
+        return;
+      }
+      throw new Error(result.message || 'Erro no login');
+    }
 
     state.usuario = result.usuario;
     welcomeUser.textContent = `Bem-vindo, ${result.usuario.usuario}`;
     userRole.textContent = result.usuario.tipo === 'admin' ? 'Administrador' : 'Funcionário';
     setMessage(loginMessage, 'Login realizado com sucesso!', 'success');
     loginForm.reset();
+    whatsappInputGroup.style.display = 'none';
+    whatsappNumInput.required = false;
+    codigoInputGroup.style.display = 'none';
+    codigoWhatsappInput.required = false;
     await loadData();
     showScreen('dashboard');
   } catch (error) {
@@ -211,6 +243,12 @@ function bindNavigation() {
 
 function logout() {
   state.usuario = null;
+  whatsappInputGroup.style.display = 'none';
+  whatsappNumInput.required = false;
+  whatsappNumInput.value = '';
+  codigoInputGroup.style.display = 'none';
+  codigoWhatsappInput.required = false;
+  codigoWhatsappInput.value = '';
   showScreen('login');
   setMessage(loginMessage, '', '');
 }

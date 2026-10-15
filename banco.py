@@ -2,6 +2,7 @@ import json
 import os
 import utilidades
 
+# Caminhos dos arquivos
 ARQUIVO_DADOS = os.path.join(os.path.dirname(__file__), "alunos.json")
 ARQUIVO_USUARIOS = os.path.join(os.path.dirname(__file__), "usuarios.json")
 
@@ -14,28 +15,28 @@ def _carregar_dados():
     if not os.path.exists(ARQUIVO_DADOS):
         return {"proximo_id": 2, "alunos": [[1, "Maria Silva", 8.0, 7.0, 9.0]]}
     try:
-        with open(ARQUIVO_DADOS, "r", encoding="utf-8") as f:
-            return json.load(f)
-    except:
+        with open(ARQUIVO_DADOS, "r", encoding="utf-8") as arquivo:
+            return json.load(arquivo)
+    except Exception:
         return {"proximo_id": 2, "alunos": []}
 
 def _salvar_dados(dados):
-    with open(ARQUIVO_DADOS, "w", encoding="utf-8") as f:
-        json.dump(dados, f, ensure_ascii=False, indent=2)
+    # No Vercel, a gravação falha silenciosamente para evitar o Erro 500
+    try:
+        with open(ARQUIVO_DADOS, "w", encoding="utf-8") as arquivo:
+            json.dump(dados, arquivo, ensure_ascii=False, indent=2)
+    except Exception:
+        pass
 
 def _carregar_usuarios():
     if not os.path.exists(ARQUIVO_USUARIOS):
-        _salvar_usuarios(USUARIOS_PADRAO)
         return USUARIOS_PADRAO
     try:
-        with open(ARQUIVO_USUARIOS, "r", encoding="utf-8") as f:
-            return json.load(f)
-    except:
+        with open(ARQUIVO_USUARIOS, "r", encoding="utf-8") as arquivo:
+            dados = json.load(arquivo)
+            return dados if isinstance(dados, list) else USUARIOS_PADRAO
+    except Exception:
         return USUARIOS_PADRAO
-
-def _salvar_usuarios(usuarios):
-    with open(ARQUIVO_USUARIOS, "w", encoding="utf-8") as f:
-        json.dump(usuarios, f, ensure_ascii=False, indent=2)
 
 def autenticar_usuario(usuario, senha):
     usuarios = _carregar_usuarios()
@@ -60,8 +61,14 @@ def cadastrar_aluno(nome, nota1, nota2, nota3):
 def relatorio_turma():
     alunos = listar_alunos()
     if not alunos:
-        return {"total": 0, "aprovados": 0, "recuperacao": 0, "reprovados": 0, "media_turma": 0.0}
-    
+        return {
+            "total": 0,
+            "aprovados": 0,
+            "recuperacao": 0,
+            "reprovados": 0,
+            "media_turma": 0.0,
+        }
+
     total = len(alunos)
     aprovados = 0
     recuperacao = 0
@@ -69,18 +76,21 @@ def relatorio_turma():
     soma_medias = 0.0
 
     for aluno in alunos:
-        _, _, n1, n2, n3 = aluno
-        media = utilidades.calcular_media(n1, n2, n3)
+        _, _, nota1, nota2, nota3 = aluno
+        media = utilidades.calcular_media(nota1, nota2, nota3)
         soma_medias += media
-        status = utilidades.verificar_situacao(media)
-        if status == "Aprovado": aprovados += 1
-        elif status == "Recuperação": recuperacao += 1
-        else: reprovados += 1
+
+        if media >= 7:
+            aprovados += 1
+        elif media >= 4:
+            recuperacao += 1
+        else:
+            reprovados += 1
 
     return {
         "total": total,
         "aprovados": aprovados,
         "recuperacao": recuperacao,
         "reprovados": reprovados,
-        "media_turma": soma_medias / total
+        "media_turma": soma_medias / total,
     }

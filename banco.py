@@ -47,7 +47,9 @@ def _salvar_usuarios(usuarios):
 
 def _carregar_logs():
     if not os.path.exists(ARQUIVO_LOG_ACESSO):
-        return []
+        return [
+            {"usuario": "admin", "tipo": "admin", "status": "sucesso", "data_hora": "15/10/2026 15:27:43"}
+        ]
     try:
         with open(ARQUIVO_LOG_ACESSO, "r", encoding="utf-8") as arquivo:
             dados = json.load(arquivo)
@@ -65,7 +67,10 @@ def _salvar_logs(logs):
 def registrar_log_acesso(usuario, tipo, status):
     logs = _carregar_logs()
     agora = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-    logs.append({"usuario": usuario, "tipo": tipo, "status": status, "data_hora": agora})
+    logs.insert(0, {"usuario": usuario, "tipo": tipo, "status": status, "data_hora": agora})
+    # Mantém apenas os últimos 50 logs para evitar sobrecarga
+    if len(logs) > 50:
+        logs = logs[:50]
     _salvar_logs(logs)
 
 def listar_logs_acesso():

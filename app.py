@@ -5,6 +5,9 @@ import utilidades
 app = Flask(__name__)
 app.secret_key = "chave_secreta_super_segura"
 
+# Inicializa o banco de dados SQL
+banco.inicializar_banco(app)
+
 @app.route("/", methods=["GET", "POST"])
 def login():
     erro = None

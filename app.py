@@ -24,14 +24,21 @@ def login():
 def painel():
     if "usuario" not in session:
         return redirect(url_for("login"))
-    relatorio = banco.relatorio_turma()
+    try:
+        relatorio = banco.relatorio_turma()
+    except Exception:
+        relatorio = {"total": 0, "aprovados": 0, "recuperacao": 0, "reprovados": 0, "media_turma": 0.0}
     return render_template("painel.html", usuario=session["usuario"], tipo=session["tipo"], relatorio=relatorio)
 
 @app.route("/alunos")
 def listar():
     if "usuario" not in session:
         return redirect(url_for("login"))
-    lista_bruta = banco.listar_alunos()
+    try:
+        lista_bruta = banco.listar_alunos()
+    except Exception:
+        lista_bruta = []
+        
     alunos = []
     for a in lista_bruta:
         media = utilidades.calcular_media(a[2], a[3], a[4])
@@ -51,8 +58,11 @@ def cadastrar():
         n2 = request.form.get("nota2")
         n3 = request.form.get("nota3")
         if nome and n1 and n2 and n3:
-            banco.cadastrar_aluno(nome, n1, n2, n3)
-            sucesso = True
+            try:
+                banco.cadastrar_aluno(nome, n1, n2, n3)
+                sucesso = True
+            except Exception:
+                pass
     return render_template("cadastrar.html", sucesso=sucesso)
 
 @app.route("/logout")

@@ -29,13 +29,17 @@ class LogModel(db.Model):
     data_hora = db.Column(db.String(30), nullable=False)
 
 def inicializar_banco(app):
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sistema.db'
+    # Se houver uma variável de ambiente DATABASE_URL (usada no Vercel/Supabase), usa ela. Senão, usa SQLite local.
+    db_url = os.environ.get("DATABASE_URL")
+    if db_url and db_url.startswith("postgres://"):
+        db_url = db_url.replace("postgres://", "postgresql://", 1)
+    
+    app.config['SQLALCHEMY_DATABASE_URI'] = db_url or 'sqlite:///sistema.db'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.init_app(app)
     
     with app.app_context():
         db.create_all()
-        # Criar usuários padrão se não existirem
         if not UsuarioModel.query.filter_by(usuario="admin").first():
             db.session.add(UsuarioModel(usuario="admin", senha="admin123", tipo="admin"))
             db.session.add(UsuarioModel(usuario="funcionario", senha="func123", tipo="funcionario"))
